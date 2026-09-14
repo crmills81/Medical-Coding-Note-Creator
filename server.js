@@ -108,7 +108,7 @@ app.post('/api/generate-note', async (req, res) => {
       body: JSON.stringify({
         systemInstruction: { parts: [{ text: systemPrompt }] },
         contents: [{ role: 'user', parts: [{ text: `Code or term: ${trimmed}` }] }],
-        generationConfig: { temperature: 0.2, maxOutputTokens: 8192 },
+        generationConfig: { temperature: 0.2, maxOutputTokens: 65536 },
       }),
     });
 
@@ -125,7 +125,9 @@ app.post('/api/generate-note', async (req, res) => {
       return res.status(502).json({ error: 'Gemini returned an empty response. Try again, or check your API quota.' });
     }
 
-    res.json({ markdown, noteType, modelUsed: MODEL, filenamePrefix: trimmed });
+    const truncated = candidate?.finishReason === 'MAX_TOKENS';
+
+    res.json({ markdown, noteType, modelUsed: MODEL, filenamePrefix: trimmed, truncated });
   } catch (error) {
     console.error('Generation error:', error);
     res.status(500).json({ error: error?.message || 'Failed to generate note.' });
