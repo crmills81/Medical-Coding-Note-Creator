@@ -1,0 +1,4 @@
+node_modules/
+.env
+data/vault-notes.json
+.DS_Store

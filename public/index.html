@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Medical Coding Note Creator</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="app">
+    <header>
+      <h1>📋 Medical Coding Note Creator</h1>
+      <p class="subtitle">Type a CPT, ICD-10-CM, modifier, or medical term. Get an Obsidian note built to spec.</p>
+    </header>
+
+    <section class="input-row">
+      <input id="codeInput" type="text" placeholder="e.g. G35.D, 52000, -RT, Hydronephrosis" autofocus />
+      <select id="typeOverride">
+        <option value="">Auto-detect</option>
+        <option value="cpt">CPT</option>
+        <option value="icd10">ICD-10-CM</option>
+        <option value="modifier">Modifier</option>
+        <option value="medterm">Medical Term</option>
+      </select>
+      <button id="generateBtn">Generate</button>
+    </section>
+
+    <section class="quick-suggestions" id="quickSuggestions"></section>
+
+    <section id="status" class="status"></section>
+
+    <section class="output-row" id="outputRow" style="display:none;">
+      <div class="output-header">
+        <span id="outputMeta"></span>
+        <div>
+          <button id="copyBtn">Copy</button>
+          <button id="saveBtn">Save to vault</button>
+        </div>
+      </div>
+      <textarea id="outputArea" spellcheck="false"></textarea>
+    </section>
+
+    <section class="saved-notes">
+      <h2>Saved notes</h2>
+      <div id="savedList"></div>
+    </section>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
