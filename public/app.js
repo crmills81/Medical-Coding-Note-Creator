@@ -65,7 +65,11 @@ async function generate() {
     outputArea.value = data.markdown;
     outputMeta.textContent = `${data.noteType.toUpperCase()} · ${data.modelUsed}`;
     outputRow.style.display = 'block';
-    setStatus('Done. Review before using — check any ⚠️ Verify flags against your source data.');
+    if (data.truncated) {
+      setStatus('⚠️ Note was cut off — it hit the model\'s output limit. Try again, or ask for a shorter version.', true);
+    } else {
+      setStatus('Done. Review before using — check any ⚠️ Verify flags against your source data.');
+    }
   } catch (err) {
     setStatus(err.message || 'Network error.', true);
   } finally {
@@ -109,9 +113,23 @@ codeInput.addEventListener('keydown', (e) => {
   if (e.key === 'Enter') generate();
 });
 
-copyBtn.addEventListener('click', () => {
-  navigator.clipboard.writeText(outputArea.value);
-  setStatus('Copied to clipboard.');
+copyBtn.addEventListener('click', async () => {
+  try {
+    await navigator.clipboard.writeText(outputArea.value);
+    const original = copyBtn.textContent;
+    copyBtn.textContent = '✓ Copied!';
+    copyBtn.classList.add('copied');
+    setStatus('Copied — paste directly into Obsidian.');
+    setTimeout(() => {
+      copyBtn.textContent = original;
+      copyBtn.classList.remove('copied');
+    }, 1500);
+  } catch (err) {
+    // Clipboard API can be blocked on some mobile browsers without HTTPS
+    // or without a direct user gesture — fall back to manual select.
+    outputArea.select();
+    setStatus('Auto-copy blocked by your browser — text is selected, press Ctrl+C / long-press to copy.', true);
+  }
 });
 
 saveBtn.addEventListener('click', async () => {
